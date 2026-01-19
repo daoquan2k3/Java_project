@@ -1,10 +1,10 @@
 package business.Impl;
 
 import business.IProductService;
-import dao.IAdminDAO;
 import dao.IProductDAO;
 import dao.Impl.ProductDAOImpl;
 import model.Product;
+import utils.TablePrinter;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -14,11 +14,13 @@ public class ProductServiceImpl implements IProductService {
     public static Scanner sc = new Scanner(System.in);
     public static final IProductDAO productDAO = new ProductDAOImpl();
 
+    private List<Product> productList;
+
 
     @Override
     public void displayAllProducts() throws SQLException {
-        List<Product> productList = productDAO.displayAllProducts();
-        productList.forEach(System.out::println);
+        productList = productDAO.displayAllProducts();
+        printTable();
     }
 
     @Override
@@ -104,12 +106,12 @@ public class ProductServiceImpl implements IProductService {
     public void searchProductByBrand() throws SQLException {
         System.out.println("Nhập vào nhãn hàng cần tìm: ");
         String brand = sc.nextLine();
-        List<Product> productList = productDAO.searchProductByBrand(brand);
+        productList = productDAO.searchProductByBrand(brand);
         if (productList.isEmpty()) {
             System.out.println("Không có sản phẩm nào thuộc nhãn hàng: " + brand);
             return;
         }
-        productList.forEach(System.out::println);
+        printTable();
     }
 
     @Override
@@ -119,23 +121,33 @@ public class ProductServiceImpl implements IProductService {
         double startPrice = Double.parseDouble(sc.nextLine());
         System.out.println("Giá kết thúc: ");
         double endPrice = Double.parseDouble(sc.nextLine());
-        List<Product> productList = productDAO.searchProductByPrice(startPrice, endPrice);
+        productList = productDAO.searchProductByPrice(startPrice, endPrice);
         if (productList.isEmpty()) {
             System.err.println("Không có sản phẩm nào trong khoảng giá này!");
             return;
         }
-        productList.forEach(System.out::println);
+        printTable();
     }
 
     @Override
     public void searchProductByStock() throws SQLException {
         System.out.println("Nhập vào số lượng sản phẩm: ");
         int productStock = Integer.parseInt(sc.nextLine());
-        List<Product> productList = productDAO.searchProductByStock(productStock);
+        productList = productDAO.searchProductByStock(productStock);
         if (productList.isEmpty()) {
             System.err.printf("Không có sản phẩm nào còn dư %d sản phẩm\n", productStock);
             return;
         }
-        productList.forEach(System.out::println);
+        printTable();
+    }
+
+    private void printTable() {
+        TablePrinter.printTable(
+                "Danh sách Sản phẩm",
+                new String[]{"ID", "TÊN", "HÃNG", "GIÁ", "KHO"},
+                new int[]{3, 27, 10, 14, 5},
+                productList,
+                p -> new Object[]{p.getId(), p.getName(), p.getBrand(), String.format("%,.0f", p.getPrice()), p.getStock()}
+        );
     }
 }
