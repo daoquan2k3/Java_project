@@ -86,14 +86,18 @@ public class CustomerServiceImpl implements ICustomerService {
         int customerId = Integer.parseInt(sc.nextLine());
         Customer customer = customerDAO.findCustomerById(customerId);
         if (customer == null) {
-            System.out.println("Mã khách hàng không tồn tại!");
+            System.err.println("Mã khách hàng không tồn tại!");
             return;
         }
-        boolean result = customerDAO.deleteCustomerById(customerId);
-        if (result) {
-            System.out.println("Xóa khách hàng thành công!");
-        } else {
-            System.err.println("Có lỗi trong quá trình xóa");
+        System.out.printf("Bạn có chắc chắn muốn xóa khách hàng số %d (Y/N): \n", customerId);
+        String choice = sc.nextLine();
+        if (choice.equalsIgnoreCase("Y")) {
+            boolean result = customerDAO.deleteCustomerById(customerId);
+            if (result) {
+                System.out.println("Xóa khách hàng thành công!");
+            } else {
+                System.err.println("Có lỗi trong quá trình xóa");
+            }
         }
     }
 }

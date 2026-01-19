@@ -3,6 +3,7 @@ package model;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Customer {
     private int id;
@@ -58,15 +59,11 @@ public class Customer {
         this.address = address;
     }
 
-    public void inputData(Scanner sc) throws SQLException {
-        System.out.println("Nhập vào tên khách hàng: ");
-        this.name = sc.nextLine();
-        System.out.println("Nhập vào số điện thoại khách hàng: ");
-        this.phone = sc.nextLine();
-        System.out.println("Nhập vào email khách hàng: ");
-        this.email = sc.nextLine();
-        System.out.println("Nhập vào địa chỉ khách hàng: ");
-        this.address = sc.nextLine();
+    public void inputData(Scanner sc) {
+        this.name = inputName(sc);
+        this.phone = inputPhone(sc);
+        this.email = inputEmail(sc);
+        this.address = inputAddress(sc);
     }
 
     @Override
@@ -74,28 +71,49 @@ public class Customer {
         return "Tên khách hàng: " + name + ", Số điện thoại: " + phone + ", Email: " + email + ", Address: " + address;
     }
 
-    public void printCustomerTable(List<Customer> customers) {
-        String headerFormat = "| %-5s | %-20s | %-12s | %-25s | %-20s |\n";
-        String line = "+-------+----------------------+--------------+---------------------------+----------------------+\n";
-
-        System.out.print(line);
-        System.out.printf(headerFormat, "ID", "HỌ TÊN", "SỐ ĐT", "EMAIL", "ĐỊA CHỈ");
-        System.out.print(line);
-
-        for (Customer c : customers) {
-            System.out.printf(headerFormat,
-                    c.getId(),
-                    truncate(c.getName(), 20),
-                    c.getPhone(),
-                    truncate(c.getEmail(), 25),
-                    truncate(c.getAddress(), 20));
+    private String inputName(Scanner sc) {
+        while (true) {
+            System.out.println("Nhập vào tên khách hàng: ");
+            String name = sc.nextLine();
+            if(name.length() <= 100) {
+                return  name;
+            }
+            System.err.println("Số lượng ký tự không hợp lệ vui lòng nhập lại!");
         }
-        System.out.print(line);
     }
 
-    // Hàm phụ để cắt bớt chữ nếu quá dài, tránh làm vỡ bảng
-    private String truncate(String text, int size) {
-        if (text == null) return "";
-        return text.length() > size ? text.substring(0, size - 3) + "..." : text;
+    private String inputPhone(Scanner sc) {
+        String phoneRegex = "^0(3|5|7|8|9)[0-9]{8}$";
+        while (true) {
+            System.out.println("Nhập vào số điện thoại khách hàng: ");
+            String phone = sc.nextLine();
+            if(Pattern.matches(phoneRegex, phone)) {
+                return phone;
+            }
+            System.err.println("Số điện thoại không đúng, vui lòng nhập lại!");
+        }
+    }
+
+    private String inputEmail(Scanner sc) {
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        while (true) {
+            System.out.println("Nhập vào địa chỉ email khách hàng: ");
+            String email = sc.nextLine();
+            if(Pattern.matches(emailRegex, email)) {
+                return email;
+            }
+            System.err.println("Định dạng không đúng, vui lòng nhập lại!");
+        }
+    }
+
+    private String inputAddress(Scanner sc) {
+        while (true) {
+            System.out.println("Nhập vào địa chỉ khách hàng: ");
+            String address = sc.nextLine();
+            if(address.length() < 255) {
+                return  address;
+            }
+            System.err.println("Địa chỉ quá dài/ngắn vui lòng nhập lại!");
+        }
     }
 }

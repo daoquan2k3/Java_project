@@ -33,11 +33,7 @@ public class CustomerManageView {
                     customerService.updateCustomer();
                     break;
                 case 4:
-                    System.out.println("Bạn có chắc chắn muốn xóa (Y/N): ");
-                    String choice2 = sc.nextLine();
-                    if (choice2.equalsIgnoreCase("Y")) {
-                        customerService.deleteCustomerById();
-                    }
+                    customerService.deleteCustomerById();
                     break;
                 case 5:
                     return;

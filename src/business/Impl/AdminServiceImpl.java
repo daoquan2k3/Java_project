@@ -25,7 +25,7 @@ public class AdminServiceImpl implements IAdminService {
             System.out.println("Đăng nhập thành công!");
             return true;
         } else {
-            System.err.println("Sai tên đăng nhập hoặc mật khẩu!");
+            System.err.println("Sai tên đăng nhập hoặc mật khẩu! Vui lòng nhập lại!");
             return false;
         }
     }
